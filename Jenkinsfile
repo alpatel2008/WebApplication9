@@ -1,6 +1,10 @@
 pipeline {
     agent any
-    
+    environment {
+        // Define environment variables
+        PUBLISH_FOLDER = "C:\\Jenkins\\workspace\\${JOB_NAME}\\publish" // Path to the published app
+        DESTINATION_FOLDER = "D:\\WebApplication99"  // Target deployment folder
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -12,7 +16,6 @@ pipeline {
             steps {
                 script {
                     // Restoring dependencies
-                    //bat "cd ${DOTNET_CLI_HOME} && dotnet restore"
                     bat "dotnet restore"
 
                     // Building the application
@@ -34,7 +37,27 @@ pipeline {
             steps {
                 script {
                     // Publishing the application
-                    bat "dotnet publish --no-restore --configuration Release --output .\\publish"
+                    bat "dotnet publish --no-restore --configuration Release --output ${PUBLISH_FOLDER}"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo "Deploying to ${DESTINATION_FOLDER}..."
+
+                    // Copying published files to the target folder
+                    bat """
+                    robocopy ${PUBLISH_FOLDER} ${DESTINATION_FOLDER} /MIR /E /Z /R:3 /W:5
+                    """
+                    
+                    // Optionally, restart IIS App Pool if needed
+                    bat """
+                    powershell -Command Restart-WebAppPool -Name 'MyAppPool'
+                    """
+                    
+                    echo 'Deployment to D://WebApplication99 success!'
                 }
             }
         }
@@ -42,7 +65,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build, test, and publish successful!'
+            echo 'Build, test, publish, and deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed. Please check the logs for details.'
         }
     }
 }
