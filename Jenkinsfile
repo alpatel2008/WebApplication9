@@ -3,7 +3,7 @@ pipeline {
     environment {
         // Define environment variables
         PUBLISH_FOLDER = "C:\\Jenkins\\workspace\\${JOB_NAME}\\publish" // Path to the published app
-        DESTINATION_FOLDER = "D:\\WebApplication99"  // Target deployment folder
+        DESTINATION_FOLDER = "D:\\WebApplication9"  // Target deployment folder
     }
     stages {
         stage('Checkout') {
