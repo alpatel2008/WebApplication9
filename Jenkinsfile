@@ -54,10 +54,10 @@ pipeline {
                     
                     // Optionally, restart IIS App Pool if needed
                     bat """
-                    powershell -Command Restart-WebAppPool -Name 'WebApplication99'
+                    powershell -Command Restart-WebAppPool -Name 'WebApplication9'
                     """
                     
-                    echo 'Deployment to D://WebApplication99 success!'
+                    echo 'Deployment to D://WebApplication9 success!'
                 }
             }
         }
